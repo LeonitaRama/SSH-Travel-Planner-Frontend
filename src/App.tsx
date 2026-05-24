@@ -1,6 +1,24 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  type To,
+} from "react-router-dom";
+import {
+  MantineProvider,
+  AppShell,
+  Burger,
+  Group,
+  Text,
+  Drawer,
+  Stack,
+  Button,
+} from "@mantine/core";
+import "@mantine/core/styles.css";
 
-// Pages
 import Hotels from "./pages/Hotels";
 import Rooms from "./pages/Rooms";
 import Flights from "./pages/Flights";
@@ -22,152 +40,103 @@ function Home() {
   );
 }
 
-function App() {
+function AppContent() {
+  const [opened, setOpened] = useState(false);
+  const navigate = useNavigate();
+
+  const links = [
+    { label: "Home", path: "/" },
+    { label: "Hotels", path: "/hotels" },
+    { label: "Rooms", path: "/rooms" },
+    { label: "Flights", path: "/flights" },
+    { label: "Bookings", path: "/bookings" },
+    { label: "Booking Items", path: "/booking-items" },
+    { label: "Payments", path: "/payments" },
+    { label: "Reviews", path: "/reviews" },
+    { label: "Notifications", path: "/notifications" },
+    { label: "Travel Packages", path: "/travel-packages" },
+    { label: "AI Assistant", path: "/ai" },
+    { label: "Login", path: "/login" },
+  ];
+
+  const handleNavigate = (path: To) => {
+    navigate(path);
+    setOpened(false);
+  };
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Home */}
-        <Route path="/" element={<Home />} />
+    <AppShell header={{ height: 60 }} padding='md'>
+      {/* Header */}
+      <AppShell.Header>
+        <Group h='100%' px='md'>
+          <Burger
+            opened={opened}
+            onClick={() => setOpened(!opened)}
+            size='sm'
+          />
 
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
+          <Text
+            component={Link}
+            to='/'
+            fw={700}
+            size='lg'
+            td='none'
+            c='inherit'
+          >
+            SSH Travel Planner
+          </Text>
+        </Group>
+      </AppShell.Header>
 
-        {/* Main Pages */}
-        <Route path="/hotels" element={<Hotels />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/flights" element={<Flights />} />
-        <Route path="/bookings" element={<Bookings />} />
-        <Route path="/booking-items" element={<BookingItems />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/travel-packages" element={<TravelPackages />} />
-        <Route path="/ai" element={<AiPage />} />
-      </Routes>
-    </BrowserRouter>
+      {/* Drawer Menu */}
+      <Drawer
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title='Navigation'
+        padding='md'
+        size='xs'
+      >
+        <Stack>
+          {links.map((link) => (
+            <Button
+              key={link.path}
+              variant='subtle'
+              fullWidth
+              onClick={() => handleNavigate(link.path)}
+            >
+              {link.label}
+            </Button>
+          ))}
+        </Stack>
+      </Drawer>
+
+      {/* Page Content */}
+      <AppShell.Main>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/hotels' element={<Hotels />} />
+          <Route path='/rooms' element={<Rooms />} />
+          <Route path='/flights' element={<Flights />} />
+          <Route path='/bookings' element={<Bookings />} />
+          <Route path='/booking-items' element={<BookingItems />} />
+          <Route path='/payments' element={<Payments />} />
+          <Route path='/reviews' element={<Reviews />} />
+          <Route path='/notifications' element={<Notifications />} />
+          <Route path='/travel-packages' element={<TravelPackages />} />
+          <Route path='/ai' element={<AiPage />} />
+        </Routes>
+      </AppShell.Main>
+    </AppShell>
   );
 }
 
-export default App;
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <MantineProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </MantineProvider>
+  );
 }
-
-export default App
