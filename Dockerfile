@@ -1,5 +1,5 @@
 # Faza 1: Build i kodit React/Vite
-FROM node:20-alpine as build-stage
+FROM node:20-alpine AS build-stage
 
 WORKDIR /app
 
