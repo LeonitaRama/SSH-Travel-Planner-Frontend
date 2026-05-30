@@ -36,7 +36,7 @@ import AdminStats from "./pages/admin/AdminStats";
 import TenantsManagement from "./pages/super-admin/TenantsManagement";
 import AllTenantsStats from "./pages/super-admin/AllTenantsStats";
 import { ThemeProvider } from "./context/ThemeContext";
-import BackgroundJobs from "./pages/admin/BackgroundJobs";
+import BackgroundJobs from "./pages/admin/";
 import { UserInteractionProvider } from "./context/UserInteractionContext";
 import { DestinationProvider } from "./context/DestinationContext";
 
