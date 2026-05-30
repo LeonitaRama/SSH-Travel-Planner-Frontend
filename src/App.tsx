@@ -36,7 +36,6 @@ import AdminStats from "./pages/admin/AdminStats";
 import TenantsManagement from "./pages/super-admin/TenantsManagement";
 import AllTenantsStats from "./pages/super-admin/AllTenantsStats";
 import { ThemeProvider } from "./context/ThemeContext";
-import BackgroundJobs from "./pages/admin/";
 import { UserInteractionProvider } from "./context/UserInteractionContext";
 import { DestinationProvider } from "./context/DestinationContext";
 
@@ -142,10 +141,6 @@ function AppContent() {
         <Route
           path='/:tenantSlug/super-admin/all-stats'
           element={<AllTenantsStats />}
-        />
-        <Route
-          path='/:tenantSlug/admin/background-jobs'
-          element={<BackgroundJobs />}
         />
       </Route>
 
