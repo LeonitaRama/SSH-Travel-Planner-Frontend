@@ -78,6 +78,8 @@ export default function Destinations() {
           </div>
         ))}
       </div>
+
+      
     </div>
   );
 }

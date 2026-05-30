@@ -118,6 +118,8 @@ export default function DestinationDetails() {
             </button>
           </div>
         )}
+
+        
       </div>
 
       <div className='bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6'>
