@@ -1,173 +1,187 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// App.tsx
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { TenantProvider } from "./context/TenantContext";
+import { useAuth } from "./context/AuthContext";
+import { useTenant } from "./hooks/useTenant";
 
-// Pages
-import Hotels from "./pages/Hotels";
-import Rooms from "./pages/Rooms";
-import Flights from "./pages/Flights";
-import Bookings from "./pages/Bookings";
-import BookingItems from "./pages/BookingItems";
-import Payments from "./pages/Payments";
-import Reviews from "./pages/Reviews";
-import Notifications from "./pages/Notifications";
-import TravelPackages from "./pages/TravelPackages";
-import AiPage from "./pages/AiPage";
-import Login from "./pages/Login";
+// Layouts
+import PublicLayout from "./Layouts/PublicLayout";
+import AuthenticatedLayout from "./Layouts/AuthenticatedLayout";
+import AdminLayout from "./Layouts/AdminLayout";
 
-function Home() {
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
+import RoleBasedRoute from "./components/RoleBasedRoute";
+
+// Public Pages
+import LandingPage from "./pages/LandingPage";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
+// Authenticated Pages
+import Home from "./pages/Home";
+import Profile from "./pages/user/Profile";
+import Destinations from "./pages/destination/Destinations";
+import DestinationDetails from "./pages/destination/DestinationDetails";
+import DestinationForm from "./pages/destination/DestinationForm";
+
+// Admin Pages
+import Users from "./pages/user/Users";
+import UserDetails from "./pages/user/UserDetails";
+import TenantSettings from "./pages/tenant/TenantSettings";
+import AdminStats from "./pages/admin/AdminStats";
+
+// Super Admin Pages
+import TenantsManagement from "./pages/super-admin/TenantsManagement";
+import AllTenantsStats from "./pages/super-admin/AllTenantsStats";
+import { ThemeProvider } from "./context/ThemeContext";
+import BackgroundJobs from "./pages/admin/BackgroundJobs";
+import { UserInteractionProvider } from "./context/UserInteractionContext";
+import { DestinationProvider } from "./context/DestinationContext";
+
+function LoadingFallback() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>SSH Travel Planner</h1>
-      <p>Welcome to the system 🚀</p>
+    <div className='flex items-center justify-center h-screen'>
+      <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
     </div>
   );
 }
 
+// AppContent kthen VETËM Routes, pa GlobalDrawer
+function AppContent() {
+  const { user, loading: authLoading } = useAuth();
+  const { tenant, loading: tenantLoading } = useTenant();
+
+  if (authLoading || tenantLoading) {
+    return <LoadingFallback />;
+  }
+
+  const basePath = `/${tenant?.slug || "tenant1"}`;
+
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route element={<PublicLayout />}>
+        <Route path='/' element={<Navigate to={basePath} replace />} />
+        <Route path='/:tenantSlug' element={<LandingPage />} />
+        <Route path='/:tenantSlug/login' element={<Login />} />
+        <Route path='/:tenantSlug/register' element={<Register />} />
+      </Route>
+
+      {/* Authenticated Routes - All users */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path='/:tenantSlug' element={<Home />} />
+        <Route path='/:tenantSlug/profile' element={<Profile />} />
+        <Route path='/:tenantSlug/destinations' element={<Destinations />} />
+        <Route
+          path='/:tenantSlug/destinations/:id'
+          element={<DestinationDetails />}
+        />
+      </Route>
+
+      {/* Staff Routes */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={["ADMIN", "SUPER_ADMIN", "STAFF"]}>
+              <AuthenticatedLayout />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path='/:tenantSlug/destinations/new'
+          element={<DestinationForm />}
+        />
+        <Route
+          path='/:tenantSlug/destinations/:id/edit'
+          element={<DestinationForm />}
+        />
+      </Route>
+
+      {/* Admin Routes */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={["ADMIN", "SUPER_ADMIN"]}>
+              <AdminLayout />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route path='/:tenantSlug/admin/stats' element={<AdminStats />} />
+        <Route path='/:tenantSlug/users' element={<Users />} />
+        <Route path='/:tenantSlug/users/:id' element={<UserDetails />} />
+        <Route
+          path='/:tenantSlug/tenant-settings'
+          element={<TenantSettings />}
+        />
+      </Route>
+
+      {/* Super Admin Routes */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <RoleBasedRoute allowedRoles={["SUPER_ADMIN"]}>
+              <AdminLayout />
+            </RoleBasedRoute>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path='/:tenantSlug/super-admin/tenants'
+          element={<TenantsManagement />}
+        />
+        <Route
+          path='/:tenantSlug/super-admin/all-stats'
+          element={<AllTenantsStats />}
+        />
+        <Route
+          path='/:tenantSlug/admin/background-jobs'
+          element={<BackgroundJobs />}
+        />
+      </Route>
+
+      <Route path='*' element={<NotFound />} />
+    </Routes>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className='flex items-center justify-center h-screen'>
+      <div className='text-center'>
+        <h1 className='text-6xl font-bold text-gray-900'>404</h1>
+        <p className='mt-2 text-gray-600'>Page not found</p>
+      </div>
+    </div>
+  );
+}
+
+// MAIN APP - GlobalDrawer vendoset JASHTË AppContent dhe BRENDA Provider-ave
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Home */}
-        <Route path="/" element={<Home />} />
-
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Main Pages */}
-        <Route path="/hotels" element={<Hotels />} />
-        <Route path="/rooms" element={<Rooms />} />
-        <Route path="/flights" element={<Flights />} />
-        <Route path="/bookings" element={<Bookings />} />
-        <Route path="/booking-items" element={<BookingItems />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/travel-packages" element={<TravelPackages />} />
-        <Route path="/ai" element={<AiPage />} />
-      </Routes>
+      <TenantProvider>
+        <AuthProvider>
+          <DestinationProvider>
+            <ThemeProvider>
+              <UserInteractionProvider>
+                <AppContent />
+              </UserInteractionProvider>
+            </ThemeProvider>
+          </DestinationProvider>
+        </AuthProvider>
+      </TenantProvider>
     </BrowserRouter>
   );
 }
 
 export default App;
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
