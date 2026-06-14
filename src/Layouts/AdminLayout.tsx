@@ -28,12 +28,6 @@ export default function AdminLayout() {
       label: "Settings",
       exact: false,
     },
-    {
-      path: `/${tenantSlug}/admin/background-jobs`,
-      icon: "⚙️",
-      label: "Background Jobs",
-      exact: true,
-    },
   ];
 
   const superAdminItems = [
