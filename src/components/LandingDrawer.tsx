@@ -94,13 +94,6 @@ export default function LandingDrawer() {
       requiresAuth: true,
     },
     {
-      title: "My Wishlist",
-      icon: "❤️",
-      path: "wishlists",
-      description: "Saved destinations",
-      requiresAuth: true,
-    },
-    {
       title: "My Reviews",
       icon: "⭐",
       path: "reviews",
@@ -143,14 +136,9 @@ export default function LandingDrawer() {
 
   // Ndarja e items në seksione
   const travelItems = menuItems.filter((item) =>
-    [
-      "Destinations",
-      "Hotels",
-      "Rooms",
-      "Flights",
-      "Travel Packages",
-      "Activities",
-    ].includes(item.title),
+    ["Destinations", "Hotels", "Rooms", "Flights", "Travel Packages"].includes(
+      item.title,
+    ),
   );
 
   const transportItems = menuItems.filter((item) =>
@@ -158,13 +146,9 @@ export default function LandingDrawer() {
   );
 
   const myStuffItems = menuItems.filter((item) =>
-    [
-      "My Bookings",
-      "My Wishlist",
-      "My Reviews",
-      "My Payments",
-      "My Notifications",
-    ].includes(item.title),
+    ["My Bookings", "My Reviews", "My Payments", "My Notifications"].includes(
+      item.title,
+    ),
   );
 
   const offersItems = menuItems.filter((item) =>
@@ -232,10 +216,10 @@ export default function LandingDrawer() {
 
   return (
     <>
-      {/* Drawer Trigger Button */}
+      {/* Drawer Trigger Button - z-index i lartë */}
       <button
         onClick={() => setIsOpen(true)}
-        className='fixed top-20 left-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 group'
+        className='fixed top-20 left-4 z-[100] bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 group'
         aria-label='Open menu'
       >
         <svg
@@ -256,17 +240,17 @@ export default function LandingDrawer() {
         </span>
       </button>
 
-      {/* Overlay */}
+      {/* Overlay (mbulesa e errët) - z-index pak më i ulët se drawer-i */}
       {isOpen && (
         <div
-          className='fixed inset-0 bg-black bg-opacity-50 z-40'
+          className='fixed inset-0 bg-black bg-opacity-50 z-[99]'
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Drawer */}
+      {/* Drawer - z-index më i lartë se gjithçka */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out overflow-y-auto ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -340,7 +324,7 @@ export default function LandingDrawer() {
           <div className='space-y-1'>{transportItems.map(renderMenuItem)}</div>
         </div>
 
-        {/* Seksioni: My Stuff (vetëm nëse user është i loguar ose trego si i bllokuar) */}
+        {/* Seksioni: My Stuff */}
         <div className='px-4 pb-4'>
           <div className='flex items-center gap-2 mb-2 pb-2 border-b-2 border-purple-500'>
             <span className='text-lg'>👤</span>

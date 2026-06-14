@@ -1,4 +1,4 @@
-// pages/user/Profile.tsx (versioni pa username)
+// pages/user/Profile.tsx
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useTenant } from "../../hooks/useTenant";
@@ -14,6 +14,7 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
   const [newEmail, setNewEmail] = useState("");
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     fetchProfile();
@@ -25,6 +26,7 @@ export default function Profile() {
       const response = await api.get("/users/profile/me");
       setProfile(response.data);
       setNewEmail(response.data.email);
+      setNewName(response.data.username);
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to load profile");
     } finally {
@@ -34,7 +36,6 @@ export default function Profile() {
 
   const handleUpdate = async () => {
     try {
-      // Dërgo vetëm email-in
       await api.patch(`/users/${user?.id}`, { email: newEmail });
       setEditing(false);
       fetchProfile();
@@ -73,35 +74,29 @@ export default function Profile() {
               }}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${theme === "dark" ? "translate-x-6" : "translate-x-1"}`}
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  theme === "dark" ? "translate-x-6" : "translate-x-1"
+                }`}
               />
             </button>
           </div>
 
-          {/* Username (readonly) */}
-          <div>
-            <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
-              Username
-            </label>
-            <p className='text-gray-900 dark:text-white'>
-              {profile?.username || "Not set"}
-            </p>
-            <p className='text-xs text-gray-500 mt-1'>
-              Username cannot be changed
-            </p>
-          </div>
-
-          {/* Role Badge */}
+          {/* Tenant & Role - Tani shfaqet edhe Tenant UUID */}
           <div className='flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg'>
             <div>
+              <p className='text-sm text-gray-500 dark:text-gray-400'>Tenant</p>
+              <p className='font-semibold dark:text-white'>{tenant?.name}</p>
+              {tenant?.id && (
+                <p className='text-xs text-gray-400 dark:text-gray-500 mt-1 font-mono'>
+                  ID: {tenant.id}
+                </p>
+              )}
+            </div>
+            <div className='text-right'>
               <p className='text-sm text-gray-500 dark:text-gray-400'>
                 Account Role
               </p>
               <p className='font-semibold dark:text-white'>{profile?.role}</p>
-            </div>
-            <div className='text-right'>
-              <p className='text-sm text-gray-500 dark:text-gray-400'>Tenant</p>
-              <p className='font-semibold dark:text-white'>{tenant?.name}</p>
             </div>
           </div>
 

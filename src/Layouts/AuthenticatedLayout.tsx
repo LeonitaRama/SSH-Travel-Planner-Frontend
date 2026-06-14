@@ -129,6 +129,7 @@ import { Outlet, Link, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTenant } from "../hooks/useTenant";
 import { useTheme } from "../context/ThemeContext";
+import LandingDrawer from "../components/LandingDrawer";
 
 export default function AuthenticatedLayout() {
   const { user, logout } = useAuth();
@@ -156,38 +157,8 @@ export default function AuthenticatedLayout() {
             >
               {tenant?.name || "SSH Travel"}
             </Link>
-
+            <LandingDrawer />
             <div className='hidden md:flex space-x-6'>
-              <Link
-                to={`/${tenantSlug}/destinations`}
-                className='text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              >
-                Destinations
-              </Link>
-              <Link
-                to={`/${tenantSlug}/hotels`}
-                className='text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              >
-                Hotels
-              </Link>
-              <Link
-                to={`/${tenantSlug}/flights`}
-                className='text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              >
-                Flights
-              </Link>
-              <Link
-                to={`/${tenantSlug}/bookings`}
-                className='text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              >
-                My Bookings
-              </Link>
-              <Link
-                to={`/${tenantSlug}/wishlists`}
-                className='text-gray-700 dark:text-gray-300 hover:text-blue-600'
-              >
-                Wishlist
-              </Link>
               {isAdmin && (
                 <Link
                   to={`/${tenantSlug}/users`}
